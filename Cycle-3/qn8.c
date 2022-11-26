@@ -137,10 +137,8 @@ void InfixToPostfix(char infix_exp[], char postfix_exp[])
 int main()
 {
 	char infix[SIZE], postfix[SIZE];         
-	//The infix expression contains single letter variables and single digit
 	printf("\nEnter Infix expression : ");
 	gets(infix);
-
 	InfixToPostfix(infix,postfix);                  
 	printf("Postfix Expression: ");
 	puts(postfix);                     
