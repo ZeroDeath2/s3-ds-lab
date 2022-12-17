@@ -1,5 +1,5 @@
 #include<stdio.h>
-#include<conio.h>
+#include<stdlib.h>
 
 struct Node
 {
@@ -17,7 +17,6 @@ void push(int value)
     else
        newNode->next = top;
     top = newNode;
-    printf("\nInsertion is Success!!!\n");
 }
 void pop()
 {
@@ -25,7 +24,7 @@ void pop()
        printf("\nStack is Empty!!!\n");
     else{
        struct Node *temp = top;
-       printf("\nDeleted element: %d", temp->data);
+       printf("\nDeleted element: %d\n ", temp->data);
        top = temp->next;
        free(temp);
     }
@@ -39,19 +38,20 @@ void display()
        while(temp->next != NULL){
 	        printf("%d--->",temp->data);
 	        temp = temp -> next;
-        }
-        printf("%d--->NULL",temp->data);
+       }
+        printf("%d--->NULL\n",temp->data);
    }
 }
-
+void peek(){
+	struct Node *temp = top;
+	printf("The top element : %d \n",temp->data);
+}
 void main()
 {
     int choice, value;
-    clrscr();
     printf("\n:: Stack using Linked List ::\n");
     while(1){
-       printf("\n****** MENU ******\n");
-       printf("1. Push\n2. Pop\n3. Display\n4. Exit\n");
+       printf("1. Push\n2. Pop\n3. Display\n4. Peek\n5. Exit\n");
        printf("Enter your choice: ");
        scanf("%d",&choice);
        switch(choice){
@@ -59,9 +59,13 @@ void main()
 		    scanf("%d", &value);
 		    push(value);
 		    break;
-	    case 2: pop(); break;
-	    case 3: display(); break;
-	    case 4: exit(0);
+	    case 2: pop(); 
+	    	break;
+	    case 3: display(); 
+	    	break;
+	    case 4: peek();
+	    	break;
+	    case 5: exit(0);
 	    default: printf("\nWrong selection!!! Please try again!!!\n");
         }
     }
