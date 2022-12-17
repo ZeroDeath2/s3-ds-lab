@@ -1,1 +1,3 @@
-This repository contains Data Structures lab programs for KTU S3
+This repository contains Data Structures lab programs for KTU S3.
+
+Hope you learn ...
