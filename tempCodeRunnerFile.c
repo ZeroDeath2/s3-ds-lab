@@ -1,78 +1,153 @@
 #include <stdio.h>
-#define maxterms 100
+#include <stdlib.h>
+
+#define TABLE_SIZE 10
+
+struct entry
+{
+	int value;
+	int occupied;
+	struct entry *next;
+};
+
 typedef struct
 {
-    int row;
-    int col;
-    int value;
-}sparse;
-int ROWS,COLS,k=1;
-sparse spm[maxterms];
-sparse tsp[maxterms];
-void inputSparse(sparse sp[],int nonzero)
+	struct entry entries[TABLE_SIZE];
+} hashtable;
+
+hashtable *create_new_hashtable()
 {
-    
-    for(int i=1;i<=nonzero;i++)
-    scanf("%d\t%d\t%d",&sp[i].row,&sp[i].col,&sp[i].value);
+	hashtable *h = (hashtable *)malloc(sizeof(hashtable));
+
+	for (int i = 0; i < TABLE_SIZE; i++)
+	{
+		h->entries[i].value = 0;
+		h->entries[i].occupied = 0;
+	}
+
+	return h;
+}
+
+// Mod
+int hash(int key)
+{
+	// int r = TABLE_SIZE / 10 + 1;
+	// int hash = 0;
+
+	// key = key * key;
+	// int key_save = key;
+	// int number_of_digits = 0;
+	// while(key > 0)
+	//{
+	//	number_of_digits++;
+	//	key = key / 10;
+	// }
+
+	// key = key_save;
+	// int mid = number_of_digits / 2;
+	// for(int i = 0; i < mid / 2; i++)
+	//		key = key / 10;
+	// for(int i = 0; i < mid / 2; i++)
+	//{
+	//	hash = (key % 10) * 10 + hash;
+	//	key = key / 10;
+	// }
+
+	// key = key_save;
+	return (key % TABLE_SIZE);
+}
+
+void insert(int key, hashtable *h)
+{
+	int value = hash(key);
+	if (!(h->entries[value].occupied))
+	{
+		h->entries[value].value = key;
+		h->entries[value].occupied = 1;
+	}
+	else
+	{
+		struct entry *new_entry = (struct entry *)malloc(sizeof(struct entry));
+		new_entry->next = NULL;
+		struct entry *ptr = &(h->entries[value]);
+		while (ptr->next != NULL)
+			ptr = ptr->next;
+		new_entry->value = key;
+		new_entry->occupied = 1;
+		ptr->next = new_entry;
+	}
 }
 
 
-void displayToSparseMatrix(sparse sp[],int r,int c, int nonzero)
+void search(int key, hashtable *h)
 {
-    
-    sp[0].row=r;
-    sp[0].col=c;
-    sp[0].value=nonzero;
-     
-    printf("%d\t%d\t%d \n", sp[0].row, sp[0].col, sp[0].value);
-    
-    for (int i = 1; i<=nonzero; i++)
-    {
-        
-        printf("%d\t%d\t%d", sp[i].row, sp[i].col, sp[i].value);
-        printf("\n");
-    }
+	int value = hash(key);
+	if (!(h->entries[value].occupied))
+	{
+		printf("Element not found\n");
+		return;
+	}
+	else
+	{
+		struct entry *ptr = &(h->entries[value]);
+		while (ptr != NULL)
+		{
+			if (ptr->value == key)
+			{
+				printf("Element is present in the hash table\n");
+				return;
+			}
+		ptr = ptr->next;
+		}
+	}
 }
-void convertotranspose( sparse sp[])
+
+void print(hashtable *h)
 {
-    tsp[0].row=sp[0].col;
-    tsp[0].col=sp[0].row;
-    tsp[0].value=sp[0].value;
-   
-    for(int i=0;i<sp[0].col;i++)
-    {
-        for(int j=1;j<=sp[0].value;j++)
-        {
-        if(sp[j].col==i)
-        
-        {
-    
-        tsp[k].row=i;
-        tsp[k].col=sp[j].row;
-        tsp[k++].value=sp[j].value;
-        }
-        }
-    }
+	for (int i = 0; i < TABLE_SIZE; i++)
+	{
+		struct entry *ptr = &(h->entries[i]);
+		if (ptr->occupied)
+		{
+			printf("%d:\t", i);
+			while (ptr != NULL)
+			{
+				if (ptr->occupied)
+					printf("%d,\t", ptr->value);
+				else
+					printf("NULL\t");
+				ptr = ptr->next;
+			}
+			printf("\n");
+		}
+	}
 }
-void printranspose()
-{
-    printf("Transpose:");
-    for(int i=0;i<k;i++)
-    printf("\n %d  %d  %d \n",tsp[i].row,tsp[i].col,tsp[i].value);
-    
-}
+
+
 int main()
 {
-    int i, j, non_zero;
-    printf("\nEnter Dimensions of matrix \n");
-    scanf("%d\n%d", &ROWS, &COLS);
-    printf("Enter the no of non zero values:");
-    scanf("%d", &non_zero);
-    printf("Enter the elements:\n");
-    inputSparse(spm,non_zero);
-    printf("Sparse representation:\n");
-    displayToSparseMatrix(spm,ROWS,COLS,non_zero);
-    convertotranspose(spm);
-    printf("Transpose:\n");
-    displayToSparseMatrix(tsp,COLS,ROWS,non_zero);
+	hashtable *h = (hashtable *)malloc(sizeof(hashtable));
+
+	while (1)
+	{
+		printf("Enter a value to enter: ");
+		int key;
+		scanf("%d", &key);
+		if (key == -1)
+			break;
+		insert(key, h);
+	}
+
+	printf("--------HASH TABLE--------\n");
+	print(h);
+
+	while (1)
+	{
+		printf("Enter a value to search: ");
+		int key;
+		scanf("%d", &key);
+		if (key == -1)
+			break;
+		search(key, h);
+	}
 }
